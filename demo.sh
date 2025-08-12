@@ -41,8 +41,8 @@ clear
 p "Step 1: Explore our EC2 instances data"
 wait
 
-p "📊 This query shows us all our EC2 instances with key details like what type they are, their current status, which team owns them, and what environment they're in. This gives us a complete inventory of our compute resources."
-wait
+# 📊 This query shows us all our EC2 instances with key details like what type they are, their current status, which team owns them, and what environment they're in. This gives us a complete inventory of our compute resources.
+# This traditional SQL query doesn't need pgvector - it's basic data retrieval that any database can handle.
 
 pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"
 SELECT 
@@ -57,8 +57,8 @@ wait
 p "Step 2: Analyze resource distribution by team"
 wait
 
-p "👥 This query groups our resources by team and shows us how many resources each team has, plus how many are currently running. This helps us understand resource allocation and identify teams that might need more or fewer resources."
-wait
+# 👥 This query groups our resources by team and shows us how many resources each team has, plus how many are currently running. This helps us understand resource allocation and identify teams that might need more or fewer resources.
+# This aggregation query doesn't need pgvector - it's standard SQL grouping and counting operations.
 
 pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"
 SELECT 
@@ -75,8 +75,8 @@ clear
 p "Step 3: Examine S3 bucket infrastructure"
 wait
 
-p "🗄️ This query shows us all our S3 storage buckets with details about their purpose, which team owns them, and what environment they're in. This helps us understand our data storage landscape and identify potential security or cost optimization opportunities."
-wait
+# 🗄️ This query shows us all our S3 storage buckets with details about their purpose, which team owns them, and what environment they're in. This helps us understand our data storage landscape and identify potential security or cost optimization opportunities.
+# This query doesn't need pgvector - it's basic data exploration and filtering that standard PostgreSQL handles well.
 
 pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"
 SELECT 
@@ -92,8 +92,8 @@ wait
 p "Step 4: Security analysis - check for potential risks"
 wait
 
-p "🔒 This query examines our S3 buckets to see which ones might have security risks. It checks if buckets have proper public access blocking configured. Buckets without proper access controls could accidentally expose sensitive data to the internet."
-wait
+# 🔒 This query examines our S3 buckets to see which ones might have security risks. It checks if buckets have proper public access blocking configured. Buckets without proper access controls could accidentally expose sensitive data to the internet.
+# This security analysis doesn't need pgvector - it's rule-based checking that standard SQL can handle efficiently.
 
 pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"
 SELECT 
@@ -111,8 +111,8 @@ clear
 p "Step 5: Cross-service infrastructure intelligence"
 wait
 
-p "🧠 This query gives us a high-level summary of our entire infrastructure by counting resources across different services (EC2, S3, Security Groups). This is like getting a bird's-eye view of our cloud footprint."
-wait
+# 🧠 This query gives us a high-level summary of our entire infrastructure by counting resources across different services (EC2, S3, Security Groups). This is like getting a bird's-eye view of our cloud footprint.
+# This summary query doesn't need pgvector - it's basic counting and subqueries that PostgreSQL handles natively.
 
 pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"
 SELECT 
@@ -125,8 +125,8 @@ wait
 p "Step 6: Cost optimization insights"
 wait
 
-p "💰 This query identifies potential cost savings by finding teams that have stopped (but not terminated) EC2 instances. These instances are still costing money but not providing any value - perfect candidates for cleanup to reduce costs."
-wait
+# 💰 This query identifies potential cost savings by finding teams that have stopped (but not terminated) EC2 instances. These instances are still costing money but not providing any value - perfect candidates for cleanup to reduce costs.
+# This cost analysis doesn't need pgvector - it's conditional logic and aggregation that standard SQL excels at.
 
 pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"
 SELECT 
@@ -143,8 +143,8 @@ clear
 p "Step 7: Environment-based resource analysis"
 wait
 
-p "🌍 This query analyzes our resources by environment (production vs development) and identifies which environments have resources exposed to the internet. Production environments with exposed resources might need security reviews."
-wait
+# 🌍 This query analyzes our resources by environment (production vs development) and identifies which environments have resources exposed to the internet. Production environments with exposed resources might need security reviews.
+# This environment analysis doesn't need pgvector - it's standard grouping and conditional counting that PostgreSQL handles efficiently.
 
 pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"
 SELECT 
@@ -159,8 +159,8 @@ wait
 p "Step 8: AI-ready data preparation - create analysis views"
 wait
 
-p "📈 This query creates a materialized view that pre-calculates common metrics we need for dashboards and reports. Instead of running complex queries every time, we can just query this view for fast results. This is like creating a summary table that updates automatically."
-wait
+# 📈 This query creates a materialized view that pre-calculates common metrics we need for dashboards and reports. Instead of running complex queries every time, we can just query this view for fast results. This is like creating a summary table that updates automatically.
+# This view creation doesn't need pgvector - it's standard PostgreSQL materialized view functionality for performance optimization.
 
 pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"
 CREATE MATERIALIZED VIEW IF NOT EXISTS infrastructure_summary AS
@@ -177,8 +177,8 @@ clear
 p "Step 9: Query our AI-ready summary view"
 wait
 
-p "📊 Now we can query our pre-built summary view to get instant infrastructure metrics. This is much faster than running the complex queries from scratch and gives us real-time insights into our infrastructure health."
-wait
+# 📊 Now we can query our pre-built summary view to get instant infrastructure metrics. This is much faster than running the complex queries from scratch and gives us real-time insights into our infrastructure health.
+# This view query doesn't need pgvector - it's simple SELECT from a materialized view for fast data retrieval.
 
 pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"SELECT * FROM infrastructure_summary;\""
 wait
@@ -186,8 +186,8 @@ wait
 p "Step 10: Complex business intelligence query"
 wait
 
-p "🎯 This advanced query combines multiple pieces of information to give us actionable business insights. It looks at each team's resource usage, identifies security risks, and provides specific recommendations like 'Security Review Needed' or 'Cost Optimization Opportunity'. This is the kind of intelligence that helps managers make informed decisions."
-wait
+# 🎯 This advanced query combines multiple pieces of information to give us actionable business insights. It looks at each team's resource usage, identifies security risks, and provides specific recommendations like 'Security Review Needed' or 'Cost Optimization Opportunity'. This is the kind of intelligence that helps managers make informed decisions.
+# This business intelligence query doesn't need pgvector - it's complex SQL with CTEs, CASE statements, and business logic that PostgreSQL handles well.
 
 pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"
 WITH team_resources AS (
@@ -223,8 +223,8 @@ wait
 p "Step 11: Verify pgvector extension and embeddings"
 wait
 
-p "🔍 First, let's confirm that pgvector (our AI extension) is working and see how many AI embeddings we have. Think of embeddings as 'fingerprints' for our infrastructure - each resource gets converted into a mathematical representation that AI can understand and compare."
-wait
+# 🔍 First, let's confirm that pgvector (our AI extension) is working and see how many AI embeddings we have. Think of embeddings as 'fingerprints' for our infrastructure - each resource gets converted into a mathematical representation that AI can understand and compare.
+# This verification doesn't need pgvector - it's just checking if the extension is installed and counting records.
 
 pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"SELECT extname, extversion FROM pg_extension WHERE extname = 'vector';\""
 wait
@@ -235,8 +235,8 @@ wait
 p "Step 12: AI-powered resource similarity analysis"
 wait
 
-p "🧠 This is where the AI magic happens! We're using vector similarity to find resources that are most similar to our backend team's configuration. The AI looks at the 'fingerprint' of each resource and finds ones that are mathematically closest. This helps us identify opportunities for standardization across teams."
-wait
+# 🧠 This is where the AI magic happens! We're using vector similarity to find resources that are most similar to our backend team's configuration. The AI looks at the 'fingerprint' of each resource and finds ones that are mathematically closest. This helps us identify opportunities for standardization across teams.
+# WHY THIS NEEDS PGVECTOR: Standard SQL can't calculate mathematical similarity between 384-dimensional vectors. pgvector provides the <-> operator for vector similarity calculations that enable AI-powered pattern recognition across infrastructure configurations.
 
 pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"
 WITH target_resource AS (
@@ -262,8 +262,8 @@ clear
 p "Step 13: Vector-based infrastructure clustering"
 wait
 
-p "🔗 This query uses AI to group our resources into clusters based on how similar they are. It's like having an AI assistant that looks at all our infrastructure and says 'These resources are similar, they should probably be managed the same way.' This helps us identify patterns and opportunities for automation."
-wait
+# 🔗 This query uses AI to group our resources into clusters based on how similar they are. It's like having an AI assistant that looks at all our infrastructure and says 'These resources are similar, they should probably be managed the same way.' This helps us identify patterns and opportunities for automation.
+# WHY THIS NEEDS PGVECTOR: Standard SQL can't perform vector-based clustering or calculate average similarity distances. pgvector enables mathematical operations on high-dimensional vectors that reveal hidden patterns in infrastructure configurations that human analysts might miss.
 
 pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"
 SELECT 
@@ -281,8 +281,8 @@ wait
 p "Step 14: AI-powered configuration recommendations"
 wait
 
-p "💡 This is the most advanced AI analysis! We're comparing every resource configuration against every other one to find patterns. The AI can spot when two teams are doing similar things but in different ways, and suggest where we could standardize. This is like having a senior architect who's seen thousands of configurations and can spot optimization opportunities."
-wait
+# 💡 This is the most advanced AI analysis! We're comparing every resource configuration against every other one to find patterns. The AI can spot when two teams are doing similar things but in different ways, and suggest where we could standardize. This is like having a senior architect who's seen thousands of configurations and can spot optimization opportunities.
+# WHY THIS NEEDS PGVECTOR: This query performs cross-comparison of all resource configurations using vector similarity. Standard SQL can't efficiently compare 384-dimensional vectors or provide intelligent similarity-based recommendations. pgvector enables AI-powered insights that would require machine learning models in traditional databases.
 
 pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"
 SELECT 
