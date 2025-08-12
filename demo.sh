@@ -28,254 +28,163 @@ TYPE_SPEED=100
 #
 DEMO_PROMPT="${GREEN}➜ ${CYAN}\W ${COLOR_RESET}"
 
+# Check if AWS credentials are available
+check_aws_credentials() {
+    if [[ -z "$AWS_ACCESS_KEY_ID" ]] || [[ -z "$AWS_SECRET_ACCESS_KEY" ]]; then
+        echo -e "\n${RED}❌ AWS credentials not found!${NC}"
+        echo -e "${YELLOW}Please set the following environment variables:${NC}"
+        echo -e "  export AWS_ACCESS_KEY_ID=your_access_key"
+        echo -e "  export AWS_SECRET_ACCESS_KEY=your_secret_key"
+        echo -e "  export AWS_DEFAULT_REGION=your_region"
+        echo -e "\n${CYAN}Continuing with sample data for demonstration...${NC}\n"
+        return 1
+    else
+        echo -e "\n${GREEN}✅ AWS credentials found!${NC}"
+        echo -e "${CYAN}Ready to sync real AWS data...${NC}\n"
+        return 0
+    fi
+}
+
 clear
 
-p "CloudQuery AI Pipeline Demo - Complete Setup & Data Sync Process"
+p "CloudQuery AI Pipeline Demo - Data Sync & Analysis Experience"
 wait
 
-p "This demo walks through the complete process: setting up CloudQuery, syncing AWS data to PostgreSQL, and then enabling AI analysis with pgvector"
-wait
-
-clear
-
-p "Phase 1: Project Setup & CloudQuery Initialization"
-wait
-
-p "Step 1: Check our current project structure"
-wait
-
-# 📁 This shows our current project setup and what we're working with
-pei "ls -la"
-wait
-
-p "Step 2: Verify CloudQuery CLI is installed"
-wait
-
-# 🔧 This checks if CloudQuery is available and shows the version
-pei "cloudquery --version"
-wait
-
-p "Step 3: Initialize CloudQuery project with AWS source"
-wait
-
-# 🚀 This creates the CloudQuery configuration files for AWS data extraction
-pei "cloudquery init --source=aws --destination=postgresql"
+p "This demo shows what it's like to use CloudQuery: syncing infrastructure data and then analyzing it with AI-powered insights"
 wait
 
 clear
 
-p "Step 4: Examine the generated CloudQuery configuration"
+p "Let's check if we have AWS credentials for real data sync"
 wait
 
-# 📋 This shows the auto-generated configuration that CloudQuery created
-pei "cat aws_to_postgresql.yaml"
+# Check AWS credentials and show appropriate message
+if check_aws_credentials; then
+    p "Great! We have AWS credentials. Let's try to sync real data from your AWS account."
+else
+    p "No AWS credentials found. We'll use sample data to demonstrate the analysis capabilities."
+fi
+
 wait
 
-p "Step 5: Customize the configuration for our specific needs"
+p "First, let's see what infrastructure data we currently have"
 wait
 
-# ⚙️ This modifies the config to focus on specific AWS resources we want to analyze
-pei "sed -i '' 's/tables: \[\"aws_ec2_instances\"\]/tables: [\"aws_ec2_instances\", \"aws_s3_buckets\", \"aws_ec2_security_groups\"]/' aws_to_postgresql.yaml"
-wait
-
-pei "cat aws_to_postgresql.yaml"
-wait
-
-clear
-
-p "Phase 2: Database Setup & pgvector Preparation"
-wait
-
-p "Step 6: Start PostgreSQL with pgvector extension"
-wait
-
-# 🗄️ This starts our PostgreSQL database with pgvector extension ready for AI analysis
-pei "docker compose up -d"
-wait
-
-p "Step 7: Wait for database to be ready and verify pgvector"
-wait
-
-# ⏳ This ensures the database is fully started and pgvector extension is available
-pei "sleep 5 && docker exec cloudquery-postgres pg_isready -U postgres"
-wait
-
-pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"SELECT extname, extversion FROM pg_extension WHERE extname = 'vector';\""
+# Show current data state
+pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"SELECT 'Current Data State' as status, (SELECT COUNT(*) FROM aws_ec2_instances) as ec2_count, (SELECT COUNT(*) FROM aws_s3_buckets) as s3_count, (SELECT COUNT(*) FROM aws_ec2_security_groups) as sg_count;\""
 wait
 
 clear
 
-p "Step 8: Create AI-ready tables and functions"
+p "Now let's attempt to sync fresh data from AWS using CloudQuery"
 wait
 
-# 🧠 This sets up the database schema for storing AI embeddings and vector analysis
-pei "docker exec -i cloudquery-postgres psql -U postgres -d asset_inventory < init.sql"
-wait
-
-p "Step 9: Verify our AI-ready database structure"
-wait
-
-# 🔍 This shows what tables we have available for AI analysis
-pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"\\dt\""
-wait
-
-clear
-
-p "Phase 3: CloudQuery Data Sync to PostgreSQL"
-wait
-
-p "Step 10: Attempt CloudQuery sync (will show auth requirements)"
-wait
-
-# 🔐 This demonstrates the CloudQuery sync process - in production you'd have AWS credentials configured
+# Attempt CloudQuery sync - this will either work with real credentials or show auth error
 pei "cloudquery sync aws_to_postgresql.yaml"
 wait
 
-p "Step 11: Check what data was synced (likely empty without AWS creds)"
+p "Let's check what data we got from the sync"
 wait
 
-# 📊 This shows the current state of our synced data
-pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"SELECT COUNT(*) as instances FROM aws_ec2_instances;\""
-wait
-
-pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"SELECT COUNT(*) as buckets FROM aws_s3_buckets;\""
+# Check what data was actually synced
+pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"SELECT 'Post-Sync Data State' as status, (SELECT COUNT(*) FROM aws_ec2_instances) as ec2_count, (SELECT COUNT(*) FROM aws_s3_buckets) as s3_count, (SELECT COUNT(*) FROM aws_ec2_security_groups) as sg_count;\""
 wait
 
 clear
 
-p "Step 12: Load sample data to demonstrate the full pipeline"
+p "If we don't have real data, let's load some sample data to demonstrate the analysis capabilities"
 wait
 
-# 🎯 This loads realistic sample data so we can demonstrate the complete AI analysis pipeline
+# Load sample data if needed
 pei "docker exec -i cloudquery-postgres psql -U postgres -d asset_inventory < sample_data.sql"
 wait
 
-p "Step 13: Verify sample data is loaded"
+p "Now let's explore our infrastructure data"
 wait
 
-# ✅ This confirms our sample data is ready for AI analysis
-pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"SELECT COUNT(*) as instances FROM aws_ec2_instances;\""
+# Show sample data
+pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"SELECT instance_id, instance_type, state->>'Name' as status, tags->>'Team' as team, tags->>'Environment' as environment FROM aws_ec2_instances;\""
 wait
 
-pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"SELECT COUNT(*) as buckets FROM aws_s3_buckets;\""
+p "Let's look at our S3 storage landscape"
 wait
 
-clear
-
-p "Phase 4: AI Analysis with pgvector on Synced Data"
-wait
-
-p "Step 14: Generate AI embeddings from our CloudQuery data"
-wait
-
-# 🧠 This converts our infrastructure data into AI-ready vector embeddings for similarity analysis
-pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"
-INSERT INTO resource_embeddings (resource_type, resource_id, resource_data, embedding)
-SELECT 
-    'ec2_instance',
-    instance_id,
-    jsonb_build_object(
-        'instance_type', instance_type,
-        'state', state,
-        'environment', tags->>'Environment',
-        'team', tags->>'Team',
-        'region', region,
-        'has_public_ip', (public_ip_address IS NOT NULL)
-    ),
-    generate_mock_embedding(tags)
-FROM aws_ec2_instances
-ON CONFLICT (resource_type, resource_id) DO NOTHING;\""
-wait
-
-p "Step 15: Verify AI embeddings are ready"
-wait
-
-# 🔍 This confirms our vector embeddings are created and ready for AI analysis
-pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"SELECT COUNT(*) as total_embeddings, resource_type FROM resource_embeddings GROUP BY resource_type;\""
+# Show S3 data
+pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"SELECT name, region, tags->>'Environment' as environment, tags->>'Team' as team, tags->>'Purpose' as purpose FROM aws_s3_buckets;\""
 wait
 
 clear
 
-p "Step 16: AI-powered resource similarity analysis"
+p "Now let's do some business intelligence analysis on our infrastructure"
 wait
 
-# 🚀 This demonstrates the core AI capability - finding similar infrastructure configurations using vector similarity
-pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"
-WITH target_resource AS (
-    SELECT embedding, resource_data 
-    FROM resource_embeddings 
-    WHERE resource_data->>'team' = 'backend'
-    LIMIT 1
-)
-SELECT 
-    'Similar to backend team config:' as analysis,
-    r.resource_data->>'instance_type' as instance_type,
-    r.resource_data->>'team' as team,
-    r.resource_data->>'environment' as environment,
-    r.embedding <-> t.embedding as similarity_distance
-FROM resource_embeddings r, target_resource t
-WHERE r.resource_type = 'ec2_instance'
-ORDER BY r.embedding <-> t.embedding
-LIMIT 3;\""
+# Team resource distribution analysis
+pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"SELECT tags->>'Team' as team, COUNT(*) as total_resources, COUNT(CASE WHEN state->>'Name' = 'running' THEN 1 END) as running_count, COUNT(CASE WHEN state->>'Name' = 'stopped' THEN 1 END) as stopped_count FROM aws_ec2_instances GROUP BY tags->>'Team' ORDER BY total_resources DESC;\""
 wait
 
-p "Step 17: Vector-based infrastructure clustering"
+p "Let's identify potential cost optimization opportunities"
 wait
 
-# 🔗 This shows how AI can group similar resources together for pattern recognition
-pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"
-SELECT 
-    'Vector Clustering Analysis' as analysis_type,
-    resource_data->>'team' as team,
-    resource_data->>'environment' as environment,
-    COUNT(*) as cluster_size,
-    AVG(embedding <-> (SELECT embedding FROM resource_embeddings WHERE resource_data->>'team' = 'backend' LIMIT 1)) as avg_similarity_to_backend
-FROM resource_embeddings
-WHERE resource_type = 'ec2_instance'
-GROUP BY resource_data->>'team', resource_data->>'environment'
-ORDER BY avg_similarity_to_backend;\""
+# Cost optimization analysis
+pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"SELECT tags->>'Team' as team, tags->>'Environment' as environment, COUNT(CASE WHEN state->>'Name' = 'stopped' THEN 1 END) as stopped_instances, CASE WHEN COUNT(CASE WHEN state->>'Name' = 'stopped' THEN 1 END) > 0 THEN 'Cost savings opportunity' ELSE 'No stopped instances' END as recommendation FROM aws_ec2_instances GROUP BY tags->>'Team', tags->>'Environment' HAVING COUNT(CASE WHEN state->>'Name' = 'stopped' THEN 1 END) > 0;\""
 wait
 
 clear
 
-p "Phase 5: Real-World Infrastructure Intelligence"
+p "Let's check for security considerations"
 wait
 
-p "Step 18: Cross-service analysis using CloudQuery data"
+# Security analysis
+pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"SELECT tags->>'Environment' as environment, COUNT(*) as total_resources, COUNT(CASE WHEN public_ip_address IS NOT NULL THEN 1 END) as exposed_resources, CASE WHEN COUNT(CASE WHEN public_ip_address IS NOT NULL THEN 1 END) > 0 THEN 'Security review recommended' ELSE 'No exposed resources' END as security_status FROM aws_ec2_instances GROUP BY tags->>'Environment' ORDER BY exposed_resources DESC;\""
 wait
 
-# 🧠 This demonstrates how CloudQuery data enables comprehensive infrastructure insights
-pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"
-SELECT 
-    'Infrastructure Summary' as report_type,
-    (SELECT COUNT(*) FROM aws_ec2_instances) as total_instances,
-    (SELECT COUNT(*) FROM aws_s3_buckets) as total_buckets,
-    (SELECT COUNT(*) FROM aws_ec2_security_groups) as total_security_groups;\""
+p "Now let's examine our S3 security posture"
 wait
 
-p "Step 19: AI-powered configuration recommendations"
+# S3 security analysis
+pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"SELECT name, tags->>'Environment' as environment, tags->>'Team' as team, CASE WHEN public_access_block_configuration IS NULL THEN 'No public access block' ELSE 'Public access blocked' END as access_status FROM aws_s3_buckets;\""
 wait
 
-# 💡 This shows the most advanced AI analysis - intelligent recommendations based on vector similarity
-pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"
-SELECT 
-    'AI Configuration Recommendations' as recommendation_type,
-    r1.resource_data->>'team' as source_team,
-    r1.resource_data->>'environment' as source_env,
-    r2.resource_data->>'team' as target_team,
-    r2.resource_data->>'environment' as target_env,
-    CASE 
-        WHEN r1.embedding <-> r2.embedding < 0.1 THEN 'High similarity - consider standardization'
-        WHEN r1.embedding <-> r2.embedding < 0.3 THEN 'Moderate similarity - review for consistency'
-        ELSE 'Low similarity - different use cases'
-    END as ai_insight
-FROM resource_embeddings r1
-CROSS JOIN resource_embeddings r2
-WHERE r1.id < r2.id 
-    AND r1.resource_type = 'ec2_instance' 
-    AND r2.resource_type = 'ec2_instance'
-ORDER BY r1.embedding <-> r2.embedding
-LIMIT 5;\""
+clear
+
+p "Now let's enable AI-powered analysis with pgvector"
+wait
+
+# Check if pgvector is ready
+pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"SELECT extname, extversion FROM pg_extension WHERE extname = 'vector';\""
+wait
+
+p "Let's create AI embeddings from our infrastructure data"
+wait
+
+# Generate embeddings for AI analysis
+pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"INSERT INTO resource_embeddings (resource_type, resource_id, resource_data, embedding) SELECT 'ec2_instance', instance_id, jsonb_build_object('instance_type', instance_type, 'state', state, 'environment', tags->>'Environment', 'team', tags->>'Team', 'region', region, 'has_public_ip', (public_ip_address IS NOT NULL)), generate_mock_embedding(tags) FROM aws_ec2_instances ON CONFLICT (resource_type, resource_id) DO NOTHING;\""
+wait
+
+p "Now let's do AI-powered similarity analysis"
+wait
+
+# AI similarity analysis
+pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"WITH target_resource AS (SELECT embedding, resource_data FROM resource_embeddings WHERE resource_data->>'team' = 'backend' LIMIT 1) SELECT 'Similar to backend config:' as analysis, r.resource_data->>'instance_type' as instance_type, r.resource_data->>'team' as team, r.resource_data->>'environment' as environment, r.embedding <-> t.embedding as similarity_distance FROM resource_embeddings r, target_resource t WHERE r.resource_type = 'ec2_instance' ORDER BY r.embedding <-> t.embedding LIMIT 3;\""
+wait
+
+clear
+
+p "Let's get AI-powered configuration recommendations"
+wait
+
+# AI configuration recommendations
+pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"SELECT 'AI Configuration Recommendations' as recommendation_type, r1.resource_data->>'team' as source_team, r2.resource_data->>'team' as target_team, CASE WHEN r1.embedding <-> r2.embedding < 0.1 THEN 'High similarity - consider standardization' WHEN r1.embedding <-> r2.embedding < 0.3 THEN 'Moderate similarity - review for consistency' ELSE 'Low similarity - different use cases' END as ai_insight FROM resource_embeddings r1 CROSS JOIN resource_embeddings r2 WHERE r1.id < r2.id AND r1.resource_type = 'ec2_instance' AND r2.resource_type = 'ec2_instance' ORDER BY r1.embedding <-> r2.embedding LIMIT 5;\""
+wait
+
+p "Finally, let's create a summary dashboard view"
+wait
+
+# Create summary view
+pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"CREATE MATERIALIZED VIEW IF NOT EXISTS infrastructure_summary AS SELECT CURRENT_TIMESTAMP as last_updated, (SELECT COUNT(*) FROM aws_ec2_instances WHERE state->>'Name' = 'running') as running_instances, (SELECT COUNT(*) FROM aws_ec2_instances WHERE state->>'Name' = 'stopped') as stopped_instances, (SELECT COUNT(*) FROM aws_s3_buckets) as total_buckets, (SELECT COUNT(*) FROM aws_ec2_security_groups) as security_groups, (SELECT COUNT(*) FROM resource_embeddings) as ai_embeddings;\""
+wait
+
+pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"SELECT * FROM infrastructure_summary;\""
 wait
 
 clear
@@ -283,28 +192,34 @@ clear
 p "Demo Complete! 🎉"
 wait
 
-p "What we've demonstrated:"
+p "What we've experienced:"
 wait
 
-p "✅ Complete CloudQuery project setup and configuration"
-p "✅ PostgreSQL database initialization with pgvector extension"
-p "✅ CloudQuery data sync to PostgreSQL (with sample data)"
-p "✅ AI-ready data preparation and vector embedding generation"
-p "✅ AI-powered infrastructure similarity analysis"
-p "✅ Vector-based clustering and pattern recognition"
-p "✅ Intelligent configuration recommendations"
+p "✅ CloudQuery data sync process (real or sample data)"
+p "✅ Infrastructure data exploration and analysis"
+p "✅ Business intelligence insights (cost, security, team allocation)"
+p "✅ AI-powered analysis with pgvector"
+p "✅ Configuration similarity and standardization recommendations"
+p "✅ Dashboard-ready summary views"
 wait
 
-p "This is the complete real-world workflow for setting up CloudQuery + pgvector AI analysis!"
+p "This is what it's like to use CloudQuery in practice:"
 wait
 
-p "Next steps in production:"
+p "1. Sync infrastructure data from AWS"
+p "2. Explore and analyze the data with SQL"
+p "3. Enable AI analysis with pgvector"
+p "4. Get intelligent insights and recommendations"
+p "5. Build dashboards and reports"
 wait
 
-p "1. Configure AWS credentials for real data sync"
-p "2. Set up scheduled CloudQuery syncs"
-p "3. Integrate with real AI embedding services"
-p "4. Build dashboards on the AI-ready data"
-p "5. Set up MCP server for AI-powered queries"
+p "The beauty is that once you have this pipeline set up, you can:"
+wait
+
+p "• Schedule regular syncs to keep data fresh"
+p "• Build automated alerts and reports"
+p "• Use AI to discover patterns and optimization opportunities"
+p "• Share insights across your team"
+p "• Make data-driven infrastructure decisions"
 wait
 
