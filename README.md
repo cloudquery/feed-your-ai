@@ -1,95 +1,68 @@
 # CloudQuery AI Pipeline Demo
 
-Transform your AWS infrastructure into AI-ready insights with CloudQuery, PostgreSQL, and pgvector. This demo shows data engineers how to build production AI/ML pipelines on clean cloud infrastructure data.
+Transform your AWS infrastructure into AI-ready insights with CloudQuery, PostgreSQL, and pgvector. This demo showcases how to build AI/ML pipelines on clean cloud infrastructure data.
 
 ## 🚀 Quick Start
 
-### Run the Interactive Demo
+### Prerequisites
+
+- Docker and Docker Compose installed
+- AWS CLI configured (optional - demo works with sample data)
+
+### Get Running in 2 Steps
 
 ```bash
+# 1. Make scripts executable and run setup
+chmod +x *.sh
+./setup.sh
+
+# 2. Run the interactive demo
 ./demo.sh
 ```
 
-The demo will:
+That's it! The setup script will automatically:
 
-- Set up PostgreSQL + pgvector automatically
-- Show real CloudQuery sync commands
-- Demonstrate AI pipeline capabilities
-- Guide you through each step with explanations
+- Install CloudQuery CLI
+- Start PostgreSQL with pgvector extension
+- Load sample AWS infrastructure data
+- Verify everything is working
 
-## 🏗️ What This Demo Shows
+## 🎯 What This Demo Shows
 
-### Data Pipeline Steps
+This demo creates a complete AI pipeline that:
 
-1. **CloudQuery Data Extraction** - AWS infrastructure → PostgreSQL
-2. **Feature Engineering** - SQL transformations for ML
-3. **Cost Optimization Analytics** - Business insights and recommendations
-4. **AI Vector Embeddings** - Infrastructure similarity analysis
-5. **Multi-Resource Intelligence** - Cross-service analytics (EC2 + S3)
+1. **Extracts AWS infrastructure data** using CloudQuery
+2. **Stores data in PostgreSQL** with pgvector for AI capabilities
+3. **Generates vector embeddings** from infrastructure configurations
+4. **Performs AI-powered analysis** including similarity search and clustering
+5. **Provides actionable insights** for cost optimization and standardization
 
-### AI/ML Capabilities
+## 🛠️ Utility Scripts
 
-- **Vector Similarity Search** - Find similar infrastructure configurations
-- **Anomaly Detection** - Identify unusual resource patterns  
-- **Cost Optimization** - AI-driven savings recommendations
-- **Security Analysis** - Automated compliance monitoring
-- **Resource Standardization** - Cross-team configuration insights
+- **`setup.sh`** - Full automated setup (start here!)
+- **`quickstart.sh`** - Quick infrastructure start for existing installations
+- **`cleanup.sh`** - Reset environment for fresh start
+- **`healthcheck.sh`** - Diagnose any issues
+- **`demo.sh`** - Interactive demo with explanations
 
-## 🛠️ Production Setup
+## 🔗 Learn More
 
-### 1. Configure AWS Credentials
+- **[CloudQuery Hub](https://hub.cloudquery.io/)** - Explore 100+ data source plugins
+- **[CloudQuery Documentation](https://docs.cloudquery.io/)** - Complete setup and usage guides
+- **[pgvector Documentation](https://github.com/pgvector/pgvector)** - Vector similarity search
+- **[PostgreSQL Documentation](https://www.postgresql.org/docs/)** - Database reference
 
-```bash
-aws configure
-# or set environment variables:
-export AWS_ACCESS_KEY_ID=your_access_key
-export AWS_SECRET_ACCESS_KEY=your_secret_key  
-export AWS_REGION=us-east-1
-```
+## 💡 This is Just One Example
 
-### 2. Run CloudQuery Sync
+This demo shows **one way** to use CloudQuery with AI pipelines. CloudQuery connects to [100+ data sources](https://hub.cloudquery.io/) including:
 
-```bash
-cloudquery sync aws_to_postgresql.yaml
-```
+- **Cloud Providers**: AWS, GCP, Azure, DigitalOcean
+- **SaaS Platforms**: GitHub, GitLab, Slack, Jira
+- **Infrastructure**: Kubernetes, Terraform, Docker
+- **Security**: CrowdStrike, Okta, Auth0
+- **And many more...**
 
-### 3. Connect to Your Data
-
-```bash
-psql postgresql://postgres:postgres@localhost:5433/asset_inventory
-```
-
-## 📊 Key Benefits for Data Engineers
-
-- **No ETL Complexity** - Direct cloud API to normalized PostgreSQL tables
-- **Rich Metadata** - Complete infrastructure context for feature engineering
-- **AI-Ready** - pgvector integration for embeddings and similarity search
-- **SQL-Based** - Use familiar tools for transformations and analysis
-- **Production-Ready** - Scales to enterprise environments
-
-## 📁 Project Files
-
-- **`demo.sh`** - Interactive demo (start here!)
-- **`aws_to_postgresql.yaml`** - CloudQuery configuration
-- **`docker-compose.yml`** - PostgreSQL + pgvector setup
-- **`sample_data.sql`** - Representative AWS infrastructure data
-- **`queries.sql`** - Additional analysis examples
-
-## 🎯 Production Workflow
-
-1. **Extract** - `cloudquery sync` pulls live AWS data
-2. **Transform** - SQL feature engineering for ML models
-3. **Embed** - Generate vectors with OpenAI/local models
-4. **Train** - Build AI systems on infrastructure data
-5. **Deploy** - Production AI insights and recommendations
-
-## 💡 Use Cases
-
-- **Cost Optimization Models** - Predict and prevent cloud waste
-- **Security Compliance** - Automated policy violation detection
-- **Resource Recommendations** - AI-powered right-sizing and optimization
-- **Anomaly Detection** - Identify unusual infrastructure patterns
-- **Team Standardization** - Cross-team configuration consistency
+Each plugin provides normalized, SQL-ready data that you can integrate with any AI/ML workflow, vector database, or analytics platform.
 
 ---
 

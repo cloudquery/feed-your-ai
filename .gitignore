@@ -1,0 +1,97 @@
+# CloudQuery AI Pipeline Demo .gitignore
+
+# Environment variables and secrets
+.env
+.env.local
+.env.*.local
+*.env
+
+# AWS credentials and configuration
+.aws/
+aws-credentials
+aws-config
+
+# CloudQuery
+.cloudquery/
+cloudquery.db
+cloudquery.log
+*.log
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+# Database
+*.sqlite
+*.db
+postgres_data/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# Node.js (if adding any frontend components)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python (if adding any Python scripts)
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# CloudQuery sync artifacts
+sync_*.log
+*.csv
+*.json
+
+# Vector embeddings cache
+embeddings_cache/
+*.pkl
+*.pickle
+
+# Sample data exports
+exports/
+backups/
+
+# Terraform (if adding infrastructure as code)
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# Kubernetes (if adding K8s manifests)
+*.kubeconfig
+
+# Backup files
+*.orig
+*.rej

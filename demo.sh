@@ -86,7 +86,10 @@ p "Now let's enable AI-powered analysis with pgvector"
 wait
 
 # Check if pgvector is ready
-pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"SELECT extname, extversion FROM pg_extension WHERE extname = 'vector';\""
+pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"
+SELECT extname, extversion
+FROM pg_extension
+WHERE extname = 'vector';\""
 wait
 
 p "Let's create AI embeddings from our infrastructure data"
@@ -113,7 +116,7 @@ wait
 
 clear
 
-p "AI Analysis Example 1: Infrastructure Similarity Discovery"
+p "Infrastructure Similarity Discovery"
 wait
 
 p "This query uses vector similarity to find resources with similar configurations, enabling standardization opportunities across teams"
@@ -143,7 +146,7 @@ wait
 
 clear
 
-p "AI Analysis Example 2: Intelligent Configuration Clustering"
+p "Intelligent Configuration Clustering"
 wait
 
 p "This query groups resources by similarity patterns, revealing hidden infrastructure clusters that could benefit from unified management"
@@ -172,7 +175,7 @@ wait
 
 clear
 
-p "AI Analysis Example 3: Cross-Team Standardization Recommendations"
+p "Cross-Team Standardization Recommendations"
 wait
 
 p "This advanced query compares every resource configuration against every other one, providing intelligent recommendations for infrastructure standardization"
