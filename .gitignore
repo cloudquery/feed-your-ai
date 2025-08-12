@@ -6,6 +6,11 @@
 .env.*.local
 *.env
 
+.cq/
+.cursor/
+.claude/
+.vscode/
+
 # AWS credentials and configuration
 .aws/
 aws-credentials
