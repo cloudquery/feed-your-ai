@@ -41,6 +41,9 @@ clear
 p "Step 1: Explore our EC2 instances data"
 wait
 
+p "📊 This query shows us all our EC2 instances with key details like what type they are, their current status, which team owns them, and what environment they're in. This gives us a complete inventory of our compute resources."
+wait
+
 pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"
 SELECT 
     instance_id,
@@ -52,6 +55,9 @@ FROM aws_ec2_instances;\""
 wait
 
 p "Step 2: Analyze resource distribution by team"
+wait
+
+p "👥 This query groups our resources by team and shows us how many resources each team has, plus how many are currently running. This helps us understand resource allocation and identify teams that might need more or fewer resources."
 wait
 
 pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"
@@ -69,6 +75,9 @@ clear
 p "Step 3: Examine S3 bucket infrastructure"
 wait
 
+p "🗄️ This query shows us all our S3 storage buckets with details about their purpose, which team owns them, and what environment they're in. This helps us understand our data storage landscape and identify potential security or cost optimization opportunities."
+wait
+
 pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"
 SELECT 
     name,
@@ -81,6 +90,9 @@ LIMIT 10;\""
 wait
 
 p "Step 4: Security analysis - check for potential risks"
+wait
+
+p "🔒 This query examines our S3 buckets to see which ones might have security risks. It checks if buckets have proper public access blocking configured. Buckets without proper access controls could accidentally expose sensitive data to the internet."
 wait
 
 pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"
@@ -99,6 +111,9 @@ clear
 p "Step 5: Cross-service infrastructure intelligence"
 wait
 
+p "🧠 This query gives us a high-level summary of our entire infrastructure by counting resources across different services (EC2, S3, Security Groups). This is like getting a bird's-eye view of our cloud footprint."
+wait
+
 pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"
 SELECT 
     'Infrastructure Summary' as report_type,
@@ -108,6 +123,9 @@ SELECT
 wait
 
 p "Step 6: Cost optimization insights"
+wait
+
+p "💰 This query identifies potential cost savings by finding teams that have stopped (but not terminated) EC2 instances. These instances are still costing money but not providing any value - perfect candidates for cleanup to reduce costs."
 wait
 
 pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"
@@ -125,6 +143,9 @@ clear
 p "Step 7: Environment-based resource analysis"
 wait
 
+p "🌍 This query analyzes our resources by environment (production vs development) and identifies which environments have resources exposed to the internet. Production environments with exposed resources might need security reviews."
+wait
+
 pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"
 SELECT 
     tags->>'Environment' as environment,
@@ -136,6 +157,9 @@ ORDER BY resource_count DESC;\""
 wait
 
 p "Step 8: AI-ready data preparation - create analysis views"
+wait
+
+p "📈 This query creates a materialized view that pre-calculates common metrics we need for dashboards and reports. Instead of running complex queries every time, we can just query this view for fast results. This is like creating a summary table that updates automatically."
 wait
 
 pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"
@@ -153,10 +177,16 @@ clear
 p "Step 9: Query our AI-ready summary view"
 wait
 
+p "📊 Now we can query our pre-built summary view to get instant infrastructure metrics. This is much faster than running the complex queries from scratch and gives us real-time insights into our infrastructure health."
+wait
+
 pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"SELECT * FROM infrastructure_summary;\""
 wait
 
 p "Step 10: Complex business intelligence query"
+wait
+
+p "🎯 This advanced query combines multiple pieces of information to give us actionable business insights. It looks at each team's resource usage, identifies security risks, and provides specific recommendations like 'Security Review Needed' or 'Cost Optimization Opportunity'. This is the kind of intelligence that helps managers make informed decisions."
 wait
 
 pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"
@@ -193,6 +223,9 @@ wait
 p "Step 11: Verify pgvector extension and embeddings"
 wait
 
+p "🔍 First, let's confirm that pgvector (our AI extension) is working and see how many AI embeddings we have. Think of embeddings as 'fingerprints' for our infrastructure - each resource gets converted into a mathematical representation that AI can understand and compare."
+wait
+
 pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"SELECT extname, extversion FROM pg_extension WHERE extname = 'vector';\""
 wait
 
@@ -200,6 +233,9 @@ pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"SE
 wait
 
 p "Step 12: AI-powered resource similarity analysis"
+wait
+
+p "🧠 This is where the AI magic happens! We're using vector similarity to find resources that are most similar to our backend team's configuration. The AI looks at the 'fingerprint' of each resource and finds ones that are mathematically closest. This helps us identify opportunities for standardization across teams."
 wait
 
 pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"
@@ -226,6 +262,9 @@ clear
 p "Step 13: Vector-based infrastructure clustering"
 wait
 
+p "🔗 This query uses AI to group our resources into clusters based on how similar they are. It's like having an AI assistant that looks at all our infrastructure and says 'These resources are similar, they should probably be managed the same way.' This helps us identify patterns and opportunities for automation."
+wait
+
 pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"
 SELECT 
     'Vector Clustering Analysis' as analysis_type,
@@ -240,6 +279,9 @@ ORDER BY avg_similarity_to_backend;\""
 wait
 
 p "Step 14: AI-powered configuration recommendations"
+wait
+
+p "💡 This is the most advanced AI analysis! We're comparing every resource configuration against every other one to find patterns. The AI can spot when two teams are doing similar things but in different ways, and suggest where we could standardize. This is like having a senior architect who's seen thousands of configurations and can spot optimization opportunities."
 wait
 
 pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"
