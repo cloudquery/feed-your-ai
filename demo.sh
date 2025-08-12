@@ -30,7 +30,10 @@ DEMO_PROMPT="${GREEN}➜ ${CYAN}\W ${COLOR_RESET}"
 
 clear
 
-p "CloudQuery AI Pipeline Demo - AWS Infrastructure Data Analysis"
+p "CloudQuery AI Pipeline Demo - AWS Infrastructure Data Analysis with pgvector"
+wait
+
+p "This demo shows how CloudQuery transforms AWS infrastructure data into AI-ready insights using vector embeddings"
 wait
 
 clear
@@ -184,7 +187,102 @@ wait
 
 clear
 
+p "🚀 PGVector AI Analysis Section 🚀"
+wait
+
+p "Step 11: Verify pgvector extension and embeddings"
+wait
+
+pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"SELECT extname, extversion FROM pg_extension WHERE extname = 'vector';\""
+wait
+
+pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"SELECT COUNT(*) as total_embeddings, resource_type FROM resource_embeddings GROUP BY resource_type;\""
+wait
+
+p "Step 12: AI-powered resource similarity analysis"
+wait
+
+pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"
+WITH target_resource AS (
+    SELECT embedding, resource_data 
+    FROM resource_embeddings 
+    WHERE resource_data->>'team' = 'backend'
+    LIMIT 1
+)
+SELECT 
+    'Similar to backend team config:' as analysis,
+    r.resource_data->>'instance_type' as instance_type,
+    r.resource_data->>'team' as team,
+    r.resource_data->>'environment' as environment,
+    r.embedding <-> t.embedding as similarity_distance
+FROM resource_embeddings r, target_resource t
+WHERE r.resource_type = 'ec2_instance'
+ORDER BY r.embedding <-> t.embedding
+LIMIT 3;\""
+wait
+
+clear
+
+p "Step 13: Vector-based infrastructure clustering"
+wait
+
+pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"
+SELECT 
+    'Vector Clustering Analysis' as analysis_type,
+    resource_data->>'team' as team,
+    resource_data->>'environment' as environment,
+    COUNT(*) as cluster_size,
+    AVG(embedding <-> (SELECT embedding FROM resource_embeddings WHERE resource_data->>'team' = 'backend' LIMIT 1)) as avg_similarity_to_backend
+FROM resource_embeddings
+WHERE resource_type = 'ec2_instance'
+GROUP BY resource_data->>'team', resource_data->>'environment'
+ORDER BY avg_similarity_to_backend;\""
+wait
+
+p "Step 14: AI-powered configuration recommendations"
+wait
+
+pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"
+SELECT 
+    'AI Configuration Recommendations' as recommendation_type,
+    r1.resource_data->>'team' as source_team,
+    r1.resource_data->>'environment' as source_env,
+    r2.resource_data->>'team' as target_team,
+    r2.resource_data->>'environment' as target_env,
+    CASE 
+        WHEN r1.embedding <-> r2.embedding < 0.1 THEN 'High similarity - consider standardization'
+        WHEN r1.embedding <-> r2.embedding < 0.3 THEN 'Moderate similarity - review for consistency'
+        ELSE 'Low similarity - different use cases'
+    END as ai_insight
+FROM resource_embeddings r1
+CROSS JOIN resource_embeddings r2
+WHERE r1.id < r2.id 
+    AND r1.resource_type = 'ec2_instance' 
+    AND r2.resource_type = 'ec2_instance'
+ORDER BY r1.embedding <-> r2.embedding
+LIMIT 5;\""
+wait
+
+clear
+
 p "Demo Complete! 🎉"
+wait
+
+p "What we've demonstrated:"
+wait
+
+p "✅ Real infrastructure data from CloudQuery"
+p "✅ Cross-service analytics (EC2, S3, Security Groups)"
+p "✅ Business intelligence insights"
+p "✅ Cost optimization analysis"
+p "✅ Security risk assessment"
+p "✅ AI-ready data preparation"
+p "🚀 PGVector AI analysis with vector embeddings"
+p "🚀 AI-powered resource similarity and clustering"
+p "🚀 Intelligent configuration recommendations"
+wait
+
+p "Your CloudQuery MCP server + pgvector is now ready for advanced AI-powered infrastructure insights!"
 wait
 
 
