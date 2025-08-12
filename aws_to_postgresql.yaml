@@ -1,0 +1,49 @@
+kind: source
+spec:
+  # Source spec section
+  name: aws
+  path: cloudquery/aws
+  registry: cloudquery
+  version: "v32.36.0"
+  tables: ["aws_ec2_instances"]
+  destinations: ["postgresql"]
+  # Learn more about the configuration options at https://cql.ink/aws_source
+  spec:
+    # Optional parameters
+    # regions: []
+    # accounts: []
+    # org: nil
+    # concurrency: 50000
+    # initialization_concurrency: 4
+    # aws_debug: false
+    # max_retries: 10
+    # max_backoff: 30
+    # custom_endpoint_url: ""
+    # custom_endpoint_hostname_immutable: nil # required when custom_endpoint_url is set
+    # custom_endpoint_partition_id: "" # required when custom_endpoint_url is set
+    # custom_endpoint_signing_region: "" # required when custom_endpoint_url is set
+    # use_paid_apis: false
+    # table_options: nil
+    # scheduler: shuffle # options are: dfs, round-robin, shuffle, or shuffle-queue
+    # use_nested_table_rate_limiting: false 
+    # enable_api_level_tracing: false 
+---
+kind: destination
+spec:
+  name: "postgresql"
+  path: "cloudquery/postgresql"
+  registry: "cloudquery"
+  version: "v8.9.0"
+  write_mode: "overwrite-delete-stale"
+  # Learn more about the configuration options at https://cql.ink/postgresql_destination
+  spec:
+    # set the environment variable in DSN format like "user=postgres password=pass+0-[word host=localhost port=5432 dbname=postgres sslmode=disable"
+    # you can also specify it in URI format like "postgres://postgres:pass@localhost:5432/postgres?sslmode=disable". any special URI characters need to be percent-encoded
+    connection_string: "postgresql://postgres:postgres@localhost:5433/asset_inventory"
+    # Optional parameters:
+    # pgx_log_level: error
+    # batch_size: 10000 # 10K entries
+    # batch_size_bytes: 100000000 # 100 MB
+    # batch_timeout: 60s
+
+    # create_performance_indexes: false #create indexes that help with performance when using `write_mode: overwrite-delete-stale`
