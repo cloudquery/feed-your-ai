@@ -236,6 +236,39 @@ load_sample_data() {
     fi
 }
 
+# Function to create AI vectors from sample data
+create_ai_vectors() {
+    print_status "Creating AI vectors from sample data..."
+    
+    # Create embeddings for EC2 instances
+    local vector_query="
+    INSERT INTO resource_embeddings (resource_type, resource_id, resource_data, embedding)
+    SELECT 
+        'ec2_instance',
+        instance_id,
+        jsonb_build_object(
+            'instance_type', instance_type,
+            'state', state,
+            'environment', tags->>'Environment',
+            'team', tags->>'Team',
+            'region', region,
+            'has_public_ip', (public_ip_address IS NOT NULL)
+        ),
+        generate_mock_embedding(tags)
+    FROM aws_ec2_instances
+    ON CONFLICT (resource_type, resource_id) DO NOTHING;"
+    
+    if docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c "$vector_query"; then
+        print_success "AI vectors created successfully"
+        
+        # Show count of created vectors
+        local vector_count=$(docker exec cloudquery-postgres psql -U postgres -d asset_inventory -t -c "SELECT COUNT(*) FROM resource_embeddings;" | tr -d ' ')
+        print_success "Created $vector_count resource embeddings for AI analysis"
+    else
+        print_warning "Failed to create AI vectors (this is not critical)"
+    fi
+}
+
 # Function to verify setup
 verify_setup() {
     print_status "Verifying setup..."
@@ -266,6 +299,14 @@ verify_setup() {
         print_success "✓ pgvector extension loaded"
     else
         print_error "✗ pgvector extension not found"
+    fi
+    
+    # Check if AI vectors were created
+    local vector_count=$(docker exec cloudquery-postgres psql -U postgres -d asset_inventory -t -c "SELECT COUNT(*) FROM resource_embeddings;" | tr -d ' ' 2>/dev/null || echo "0")
+    if [[ "$vector_count" -gt 0 ]]; then
+        print_success "✓ AI vectors created ($vector_count embeddings)"
+    else
+        print_warning "⚠ No AI vectors found"
     fi
 }
 
@@ -351,6 +392,9 @@ main() {
     
     # Load sample data
     load_sample_data
+    
+    # Create AI vectors from sample data
+    create_ai_vectors
     
     # Verify setup
     verify_setup
