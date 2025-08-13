@@ -33,9 +33,21 @@ This demo creates a complete AI pipeline that:
 
 1. **Extracts AWS infrastructure data** using CloudQuery
 2. **Stores data in PostgreSQL** with pgvector for AI capabilities
-3. **Generates vector embeddings** from infrastructure configurations
+3. **Generates real vector embeddings** using local AI models (sentence-transformers)
 4. **Performs AI-powered analysis** including similarity search and clustering
 5. **Provides actionable insights** for cost optimization and standardization
+
+## 🤖 AI Embedding Generation
+
+This demo uses **local AI models** to generate meaningful vector embeddings from your infrastructure configurations:
+
+- **Model**: `all-MiniLM-L6-v2` (384 dimensions, production-ready)
+- **Processing**: Converts resource metadata to descriptive text
+- **Generation**: Creates semantic embeddings locally without external APIs
+- **Storage**: pgvector-optimized vectors for fast similarity search
+- **Benefits**: No API costs, works offline, genuine semantic understanding
+
+The embeddings capture the semantic meaning of your infrastructure, enabling intelligent similarity analysis between resources, teams, and environments.
 
 ## 🛠️ Utility Scripts
 
@@ -44,6 +56,13 @@ This demo creates a complete AI pipeline that:
 - **`cleanup.sh`** - Reset environment for fresh start
 - **`healthcheck.sh`** - Diagnose any issues
 - **`demo.sh`** - Interactive demo with explanations
+
+## 🔧 AI Pipeline Components
+
+- **`generate_embeddings.py`** - Local AI embedding generation using sentence-transformers
+- **`run_embeddings.sh`** - Automated embedding generation script
+- **`Dockerfile.embeddings`** - Containerized embedding service
+- **`requirements.txt`** - Python dependencies for AI models
 
 ## 🔗 Learn More
 

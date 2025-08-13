@@ -95,23 +95,9 @@ wait
 p "Let's create AI embeddings from our infrastructure data"
 wait
 
-# Generate embeddings for AI analysis
-pei "docker exec cloudquery-postgres psql -U postgres -d asset_inventory -c \"
-INSERT INTO resource_embeddings (resource_type, resource_id, resource_data, embedding)
-SELECT 
-    'ec2_instance',
-    instance_id,
-    jsonb_build_object(
-        'instance_type', instance_type,
-        'state', state,
-        'environment', tags->>'Environment',
-        'team', tags->>'Team',
-        'region', region,
-        'has_public_ip', (public_ip_address IS NOT NULL)
-    ),
-    generate_mock_embedding(tags)
-FROM aws_ec2_instances
-ON CONFLICT (resource_type, resource_id) DO NOTHING;\""
+# Generate real embeddings for AI analysis using local sentence-transformers
+pei "echo 'Generating real embeddings using local AI models...'"
+pei "docker compose run --rm embeddings"
 wait
 
 clear
